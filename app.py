@@ -241,35 +241,66 @@ def run_extractor():
         mod.CACHE_DIR   = CACHE_DIR
         mod.OUTPUT_FILE = OUTPUT_FILE
 
+        # Download non-NACTA lists first (fast)
         local_files = {}
         for key, cfg in mod.SOURCES.items():
+            if key == 'NACTA':
+                continue
             try:
-                if key == 'NACTA':
-                    local_files[key] = mod.download_nacta(cfg)
-                else:
-                    local_files[key] = mod.download(key, cfg)
+                local_files[key] = mod.download(key, cfg)
             except Exception as e:
                 log(f'[{key}] download error: {e}')
                 local_files[key] = None
 
-        all_rows, counts = [], {}
+        # Parse and build Excel without NACTA first
+        all_rows_no_nacta, counts_no_nacta = [], {}
         for key in mod.ORDER:
+            if key == 'NACTA':
+                continue
             path = local_files.get(key)
             if not path or not Path(path).exists():
-                counts[key] = 0; continue
+                counts_no_nacta[key] = 0; continue
             try:
                 rows = mod.PARSERS[mod.SOURCES[key]['format']](path)
             except Exception as e:
                 log(f'[{key}] parse error: {e}')
                 rows = []
-            counts[key] = len(rows)
-            all_rows.extend(rows)
+            counts_no_nacta[key] = len(rows)
+            all_rows_no_nacta.extend(rows)
             log(f'[{key}] {len(rows):,} records parsed')
 
-        mod.build_excel(all_rows, counts)
-        status['records']      = counts
+        # Save interim Excel (without NACTA)
+        counts_no_nacta['NACTA'] = 0
+        mod.build_excel(all_rows_no_nacta, counts_no_nacta)
+        status['records']      = counts_no_nacta.copy()
         status['last_success'] = datetime.utcnow().strftime('%d %b %Y %H:%M UTC')
-        log(f'Done — {sum(counts.values()):,} total records')
+        log(f'Interim Excel saved ({sum(counts_no_nacta.values()):,} records — NACTA downloading...)')
+
+        # Now download NACTA (slow — Playwright)
+        try:
+            nacta_cfg = mod.SOURCES['NACTA']
+            local_files['NACTA'] = mod.download_nacta(nacta_cfg)
+        except Exception as e:
+            log(f'[NACTA] download error: {e}')
+            local_files['NACTA'] = None
+
+        # Parse NACTA and rebuild final Excel
+        nacta_path = local_files.get('NACTA')
+        if nacta_path and Path(nacta_path).exists():
+            try:
+                nacta_rows = mod.PARSERS['xml_nacta'](nacta_path)
+            except Exception as e:
+                log(f'[NACTA] parse error: {e}')
+                nacta_rows = []
+        else:
+            nacta_rows = []
+
+        counts_no_nacta['NACTA'] = len(nacta_rows)
+        all_rows_final = all_rows_no_nacta + nacta_rows
+        mod.build_excel(all_rows_final, counts_no_nacta)
+        status['records']      = counts_no_nacta.copy()
+        status['last_success'] = datetime.utcnow().strftime('%d %b %Y %H:%M UTC')
+        log(f'Done — {sum(counts_no_nacta.values()):,} total records')
 
     except Exception as e:
         status['error'] = str(e)
