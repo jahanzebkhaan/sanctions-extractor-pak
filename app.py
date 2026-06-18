@@ -241,36 +241,35 @@ def run_extractor():
         mod.CACHE_DIR   = CACHE_DIR
         mod.OUTPUT_FILE = OUTPUT_FILE
 
-        try:
-            local_files = {}
-            for key, cfg in mod.SOURCES.items():
-                try:
-                    if key == 'NACTA':
-                        local_files[key] = mod.download_nacta(cfg)
-                    else:
-                        local_files[key] = mod.download(key, cfg)
-                except Exception as e:
-                    log(f'[{key}] download error: {e}')
-                    local_files[key] = None
+        local_files = {}
+        for key, cfg in mod.SOURCES.items():
+            try:
+                if key == 'NACTA':
+                    local_files[key] = mod.download_nacta(cfg)
+                else:
+                    local_files[key] = mod.download(key, cfg)
+            except Exception as e:
+                log(f'[{key}] download error: {e}')
+                local_files[key] = None
 
-            all_rows, counts = [], {}
-            for key in mod.ORDER:
-                path = local_files.get(key)
-                if not path or not Path(path).exists():
-                    counts[key] = 0; continue
-                try:
-                    rows = mod.PARSERS[mod.SOURCES[key]['format']](path)
-                except Exception as e:
-                    log(f'[{key}] parse error: {e}')
-                    rows = []
-                counts[key] = len(rows)
-                all_rows.extend(rows)
-                log(f'[{key}] {len(rows):,} records parsed')
+        all_rows, counts = [], {}
+        for key in mod.ORDER:
+            path = local_files.get(key)
+            if not path or not Path(path).exists():
+                counts[key] = 0; continue
+            try:
+                rows = mod.PARSERS[mod.SOURCES[key]['format']](path)
+            except Exception as e:
+                log(f'[{key}] parse error: {e}')
+                rows = []
+            counts[key] = len(rows)
+            all_rows.extend(rows)
+            log(f'[{key}] {len(rows):,} records parsed')
 
-            mod.build_excel(all_rows, counts)
-            status['records']      = counts
-            status['last_success'] = datetime.utcnow().strftime('%d %b %Y %H:%M UTC')
-            log(f'Done — {sum(counts.values()):,} total records')
+        mod.build_excel(all_rows, counts)
+        status['records']      = counts
+        status['last_success'] = datetime.utcnow().strftime('%d %b %Y %H:%M UTC')
+        log(f'Done — {sum(counts.values()):,} total records')
 
     except Exception as e:
         status['error'] = str(e)
