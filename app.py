@@ -241,15 +241,6 @@ def run_extractor():
         mod.CACHE_DIR   = CACHE_DIR
         mod.OUTPUT_FILE = OUTPUT_FILE
 
-        # Redirect print to our logger
-        import builtins
-        original_print = builtins.print
-        def capturing_print(*args, **kwargs):
-            msg = ' '.join(str(a) for a in args)
-            log(msg)
-            original_print(*args, **kwargs)
-        builtins.print = capturing_print
-
         try:
             local_files = {}
             for key, cfg in mod.SOURCES.items():
@@ -280,9 +271,6 @@ def run_extractor():
             status['records']      = counts
             status['last_success'] = datetime.utcnow().strftime('%d %b %Y %H:%M UTC')
             log(f'Done — {sum(counts.values()):,} total records')
-
-        finally:
-            builtins.print = original_print
 
     except Exception as e:
         status['error'] = str(e)
