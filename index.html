@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Global Sanctions Lists — Jahanzeb Khan</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      background: #0B1120; color: #F1F5F9; min-height: 100vh;
+      padding: 48px 20px;
+    }
+    .container { max-width: 880px; margin: 0 auto; }
+
+    /* Header */
+    .header { margin-bottom: 40px; }
+    .header h1 {
+      font-size: 2.2rem; font-weight: 800; color: #F8FAFC;
+      margin-bottom: 6px;
+    }
+    .header .subtitle {
+      color: #64748B; font-size: 1rem; margin-bottom: 24px;
+    }
+
+    /* Author card */
+    .author {
+      display: flex; align-items: center; gap: 16px;
+      background: #1E2D45; border-radius: 12px;
+      padding: 20px 24px; border: 1px solid #2D3F5A;
+      margin-bottom: 32px;
+    }
+    .author-avatar {
+      width: 52px; height: 52px; border-radius: 50%;
+      background: linear-gradient(135deg, #3B82F6, #7B3DB5);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.4rem; font-weight: 800; color: #fff; flex-shrink: 0;
+    }
+    .author-name {
+      font-size: 1.4rem; font-weight: 800; color: #F8FAFC;
+    }
+    .author-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: #60A5FA; text-decoration: none; font-size: 0.9rem;
+      font-weight: 600; margin-top: 4px;
+    }
+    .author-link:hover { color: #93C5FD; }
+
+    /* Download card */
+    .download-card {
+      background: linear-gradient(135deg, #14532D 0%, #166534 100%);
+      border-radius: 14px; padding: 32px;
+      border: 1px solid #16A34A; margin-bottom: 24px;
+      text-align: center;
+    }
+    .download-card h2 {
+      font-size: 1.3rem; font-weight: 700; color: #4ADE80; margin-bottom: 8px;
+    }
+    .download-card p {
+      color: #86EFAC; font-size: 0.9rem; margin-bottom: 20px;
+    }
+    .btn-download {
+      display: inline-block; padding: 16px 40px;
+      background: #16A34A; color: #fff; border-radius: 10px;
+      font-weight: 800; font-size: 1.1rem; text-decoration: none;
+      transition: background 0.2s; border: 2px solid #4ADE80;
+    }
+    .btn-download:hover { background: #15803D; }
+    .last-updated {
+      color: #4ADE80; font-size: 0.8rem; margin-top: 12px;
+      opacity: 0.8;
+    }
+
+    /* Sources grid */
+    .card {
+      background: #1E2D45; border-radius: 12px; padding: 28px;
+      margin-bottom: 20px; border: 1px solid #2D3F5A;
+    }
+    .card h2 {
+      font-size: 0.9rem; font-weight: 700; color: #93C5FD;
+      text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 20px;
+    }
+    .sources {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 12px;
+    }
+    .source {
+      background: #0F1C2E; border-radius: 10px; padding: 18px;
+      border-left: 4px solid #3B82F6; text-align: center;
+    }
+    .source.ofac  { border-color: #BF9000; }
+    .source.ukhmt { border-color: #2E75B6; }
+    .source.eu    { border-color: #548235; }
+    .source.unsc  { border-color: #C55A11; }
+    .source.nacta { border-color: #7B3DB5; }
+    .source-flag  { font-size: 1.6rem; margin-bottom: 6px; }
+    .source-name  { font-weight: 700; font-size: 0.85rem; color: #E2E8F0; }
+    .source-count {
+      font-size: 1.5rem; font-weight: 800; color: #F8FAFC;
+      margin: 4px 0;
+    }
+    .source-sub   { font-size: 0.7rem; color: #64748B; }
+    .total-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 18px 0 0; border-top: 1px solid #2D3F5A; margin-top: 16px;
+    }
+    .total-label  { font-weight: 700; color: #94A3B8; font-size: 0.95rem; }
+    .total-num    { font-size: 2rem; font-weight: 800; color: #4ADE80; }
+
+    /* Columns */
+    .cols-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+    }
+    .col-item {
+      background: #0F1C2E; border-radius: 6px; padding: 8px 12px;
+      font-size: 0.8rem; color: #94A3B8; border-left: 2px solid #2D3F5A;
+    }
+
+    /* Disclaimer */
+    .disclaimer {
+      background: #1a1a2e; border: 1px solid #2D3F5A; border-radius: 10px;
+      padding: 16px 20px; font-size: 0.8rem; color: #64748B; margin-top: 8px;
+    }
+
+    footer {
+      text-align: center; color: #334155; font-size: 0.8rem; margin-top: 40px;
+    }
+    footer a { color: #475569; text-decoration: none; }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <h1>🌐 Global Sanctions Lists</h1>
+    <p class="subtitle">
+      OFAC · UK HMT · EU FSF · UNSC · NACTA Pakistan — consolidated into one Excel file
+    </p>
+  </div>
+
+  <!-- Author -->
+  <div class="author">
+    <div class="author-avatar">JK</div>
+    <div>
+      <div class="author-name">Jahanzeb Khan</div>
+      <a class="author-link"
+         href="https://www.linkedin.com/in/jahanzeb-khan-537756130/"
+         target="_blank">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#60A5FA">
+          <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037
+                   -1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046
+                   c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286z
+                   M5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1
+                   2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452z"/>
+        </svg>
+        Connect on LinkedIn
+      </a>
+    </div>
+  </div>
+
+  <!-- Download -->
+  <div class="download-card">
+    <h2>⬇ Download Latest Excel</h2>
+    <p>All 5 sanctions lists · 40 columns · Colour-coded · Auto-filtered</p>
+    <a href="sanctions_output.xlsx" class="btn-download" download>
+      Download Excel File
+    </a>
+    <div class="last-updated" id="updated"></div>
+  </div>
+
+  <!-- Sources -->
+  <div class="card">
+    <h2>Data Sources</h2>
+    <div class="sources">
+      <div class="source ofac">
+        <div class="source-flag">🇺🇸</div>
+        <div class="source-name">OFAC</div>
+        <div class="source-count">7,481</div>
+        <div class="source-sub">US Treasury SDN</div>
+      </div>
+      <div class="source ukhmt">
+        <div class="source-flag">🇬🇧</div>
+        <div class="source-name">UK HMT</div>
+        <div class="source-count">3,834</div>
+        <div class="source-sub">OFSI Consolidated</div>
+      </div>
+      <div class="source eu">
+        <div class="source-flag">🇪🇺</div>
+        <div class="source-name">EU FSF</div>
+        <div class="source-count">4,405</div>
+        <div class="source-sub">European Commission</div>
+      </div>
+      <div class="source unsc">
+        <div class="source-flag">🇺🇳</div>
+        <div class="source-name">UNSC</div>
+        <div class="source-count">730</div>
+        <div class="source-sub">UN Security Council</div>
+      </div>
+      <div class="source nacta">
+        <div class="source-flag">🇵🇰</div>
+        <div class="source-name">NACTA</div>
+        <div class="source-count">4,779</div>
+        <div class="source-sub">Pakistan Schedule IV</div>
+      </div>
+    </div>
+    <div class="total-row">
+      <span class="total-label">TOTAL RECORDS</span>
+      <span class="total-num">21,229</span>
+    </div>
+  </div>
+
+  <!-- Columns -->
+  <div class="card">
+    <h2>40 Columns Extracted</h2>
+    <div class="cols-grid">
+      <div class="col-item">Source</div>
+      <div class="col-item">Reference / UID</div>
+      <div class="col-item">Sanctions Programme</div>
+      <div class="col-item">Last Name</div>
+      <div class="col-item">First Name</div>
+      <div class="col-item">Second / Middle Name</div>
+      <div class="col-item">Third Name</div>
+      <div class="col-item">Fourth Name</div>
+      <div class="col-item">Fifth Name</div>
+      <div class="col-item">Title</div>
+      <div class="col-item">Designation / Position</div>
+      <div class="col-item">Gender</div>
+      <div class="col-item">Good Quality AKA</div>
+      <div class="col-item">Low Quality AKA</div>
+      <div class="col-item">Formerly Known As</div>
+      <div class="col-item">Date of Birth</div>
+      <div class="col-item">Place of Birth</div>
+      <div class="col-item">Country of Birth</div>
+      <div class="col-item">Nationality 1</div>
+      <div class="col-item">Nationality 2</div>
+      <div class="col-item">Nationality 3+</div>
+      <div class="col-item">Passport Number</div>
+      <div class="col-item">Passport Country</div>
+      <div class="col-item">Passport Issue Date</div>
+      <div class="col-item">Passport Expiry</div>
+      <div class="col-item">National ID Number</div>
+      <div class="col-item">National ID Type</div>
+      <div class="col-item">National ID Country</div>
+      <div class="col-item">Passport Details</div>
+      <div class="col-item">National ID Details</div>
+      <div class="col-item">Address</div>
+      <div class="col-item">City</div>
+      <div class="col-item">State / Province</div>
+      <div class="col-item">Country</div>
+      <div class="col-item">Postal Code</div>
+      <div class="col-item">Listed On</div>
+      <div class="col-item">UK Designated On</div>
+      <div class="col-item">Last Updated</div>
+      <div class="col-item">Interpol Link</div>
+      <div class="col-item">Remarks / Other Info</div>
+    </div>
+  </div>
+
+  <!-- Disclaimer -->
+  <div class="disclaimer">
+    ⚠️ For compliance research and analytical purposes only.
+    Always verify against official sources before making regulatory screening decisions.
+    Data sourced directly from OFAC, UK HMT, EU FSF, UNSC and NACTA official portals.
+  </div>
+
+  <footer style="margin-top:32px;">
+    Built by <a href="https://www.linkedin.com/in/jahanzeb-khan-537756130/"
+    target="_blank">Jahanzeb Khan</a> ·
+    <a href="https://github.com/YOUR_USERNAME/sanctions-extractor-pak"
+    target="_blank">GitHub</a>
+  </footer>
+
+</div>
+<script>
+  // Show last modified date of the Excel file
+  fetch('sanctions_output.xlsx', {method:'HEAD'})
+    .then(r => {
+      const d = new Date(r.headers.get('last-modified'));
+      if (!isNaN(d)) {
+        document.getElementById('updated').textContent =
+          'Last updated: ' + d.toLocaleDateString('en-GB',
+          {day:'numeric', month:'long', year:'numeric'});
+      }
+    }).catch(()=>{});
+</script>
+</body>
+</html>
